@@ -1,0 +1,19 @@
+{
+  "version": 3,
+  "builds": [
+    {
+      "src": "MWeather/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/MWeather/index.html"
+    },
+    {
+      "src": "^(.*)$",
+      "dest": "/MWeather/$1"
+    }
+  ]
+}
