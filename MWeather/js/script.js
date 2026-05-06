@@ -182,23 +182,21 @@ async function getWeather(cityName) {
         // но это единственный результат, мы его берем, но можем предпочесть имя пользователя
         // Однако лучше найти лучший результат из списка
         const results = geoData.results;
+        
+        // Сортируем результаты по населению, чтобы крупные города были первыми
+        results.sort((a, b) => (b.population || 0) - (a.population || 0));
+        
         let bestResult = results[0];
         
-        // Поиск города с максимальным населением или точным совпадением
-        for (const res of results) {
-            // Приоритет 1: Точное совпадение имени
-            if (res.name.toLowerCase() === cityName.toLowerCase()) {
-                bestResult = res;
-                break; 
-            }
-            // Приоритет 2: Наибольшее население (если имена похожи)
-            if (res.population > (bestResult.population || 0)) {
-                bestResult = res;
-            }
+        // Если есть точное совпадение по имени (без учета регистра), берем его
+        const exactMatch = results.find(res => res.name.toLowerCase() === cityName.toLowerCase());
+        if (exactMatch) {
+            bestResult = exactMatch;
         }
         
-        const actualCityName = bestResult.name;
-        fetchWeather(bestResult.latitude, bestResult.longitude, actualCityName);
+        // Используем имя из поиска для отображения, чтобы не было "Бобруйское" вместо "Бобруйск"
+        const displayName = cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+        fetchWeather(bestResult.latitude, bestResult.longitude, displayName);
         
     } catch (error) {
         console.error(error);
@@ -351,7 +349,7 @@ function updateMap(lat, lon) {
     const iframe = document.getElementById('weather-map-iframe');
     // Используем обновленный URL для Windy (версия 2)
     // Добавляем параметры для отображения ветра и интерактивности
-    const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&zoom=5&level=surface&overlay=temp&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`;
+    const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&zoom=6&level=surface&overlay=temperature&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`;
     
     setTimeout(() => {
         iframe.src = url;
