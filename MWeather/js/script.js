@@ -175,41 +175,63 @@ async function getWeather(cityName) {
         }
         
         
-        let results = geoData.results;
+        let results = geoData.results || [];
         
         // Если результаты выглядят "мелкими" (нет крупных городов), пробуем поискать латиницей
-        if (results[0].population < 5000 || !results[0].population) {
+        if (results.length === 0 || results[0].population < 5000 || !results[0].population) {
             try {
-                // Простая транслитерация для поиска (Бобруйск -> Bobruisk)
-                const translit = cityName
+                // Улучшенная транслитерация (Бобруйск -> bobruysk)
+                const translit = cityName.toLowerCase()
                     .replace(/б/g, 'b').replace(/о/g, 'o').replace(/р/g, 'r')
-                    .replace(/у/g, 'u').replace(/й/g, 'i').replace(/с/g, 's').replace(/к/g, 'k');
+                    .replace(/у/g, 'u').replace(/й/g, 'y').replace(/с/g, 's').replace(/к/g, 'k')
+                    .replace(/и/g, 'i');
+                
+                // Дополнительный вариант для Беларуси (о -> a)
+                const translitBY = translit.replace(/o/g, 'a');
                 
                 const fallbackUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(translit)}&count=10&language=ru&format=json`;
-                const fallbackRes = await fetch(fallbackUrl);
-                const fallbackData = await fallbackRes.json();
+                const fallbackUrlBY = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(translitBY)}&count=10&language=ru&format=json`;
                 
-                if (fallbackData.results && fallbackData.results.length > 0) {
-                    results = [...results, ...fallbackData.results];
-                }
+                const [f1, f2] = await Promise.all([fetch(fallbackUrl), fetch(fallbackUrlBY)]);
+                const [d1, d2] = await Promise.all([f1.json(), f2.json()]);
+                
+                if (d1.results) results = [...results, ...d1.results];
+                if (d2.results) results = [...results, ...d2.results];
             } catch(e) { console.warn("Fallback search failed", e); }
         }
 
-        // Сортируем результаты по населению, чтобы крупные города были первыми
-        results.sort((a, b) => (b.population || 0) - (a.population || 0));
+        // Функция для очистки имени от похожих латинских букв (для сравнения)
+        const normalizeName = (name) => {
+            return name.toLowerCase()
+                .replace(/o/g, 'о').replace(/a/g, 'а').replace(/e/g, 'е').replace(/p/g, 'р').replace(/c/g, 'с').replace(/y/g, 'у');
+        };
+
+        const targetNormalized = normalizeName(cityName);
+
+        // Сортируем результаты: сначала по "типу" (города выше деревень), затем по населению
+        results.sort((a, b) => {
+            const getRank = (res) => {
+                let rank = 0;
+                if (res.feature_code && res.feature_code.startsWith('PPLC')) rank += 100; // Столица
+                if (res.feature_code && res.feature_code.startsWith('PPLA')) rank += 50;  // Областной центр
+                if (res.population > 50000) rank += 20;
+                
+                // Бонус за точное совпадение (с учетом нормализации)
+                if (normalizeName(res.name) === targetNormalized) rank += 30;
+                
+                return rank;
+            };
+            const rankDiff = getRank(b) - getRank(a);
+            if (rankDiff !== 0) return rankDiff;
+            return (b.population || 0) - (a.population || 0);
+        });
         
         let bestResult = results[0];
-        
-        // Если есть точное совпадение по имени (без учета регистра), берем его
-        const exactMatch = results.find(res => res.name.toLowerCase() === cityName.toLowerCase());
-        if (exactMatch && (exactMatch.population || 0) > (bestResult.population || 0) * 0.1) {
-            bestResult = exactMatch;
-        }
         
         // Используем имя из поиска для отображения
         const displayName = cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
         
-        console.log(`Selected city: ${bestResult.name} (${bestResult.country}), population: ${bestResult.population}, coords: ${bestResult.latitude}, ${bestResult.longitude}`);
+        console.log(`[v3.1] Selected city: ${bestResult.name} (${bestResult.country}), population: ${bestResult.population}, coords: ${bestResult.latitude}, ${bestResult.longitude}`);
         
         fetchWeather(bestResult.latitude, bestResult.longitude, displayName);
         
