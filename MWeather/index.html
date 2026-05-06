@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MWeather - Прогноз погоды</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Иконки FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <a href="#" class="logo" id="logo-link">
+                <i class="fas fa-cloud"></i>
+                <span>MWeather</span>
+            </a>
+            
+            <div class="search-bar">
+                <input type="text" id="city-search" placeholder="Поиск города..." value="Москва">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#" class="active" data-target="home-view"><i class="fas fa-cloud-sun"></i> Главная</a>
+                <a href="#" data-target="hourly-view"><i class="fas fa-clock"></i> Почасовой</a>
+                <a href="#" data-target="forecast-view"><i class="fas fa-calendar-alt"></i> На 10 дней</a>
+                <a href="#" data-target="map-view"><i class="fas fa-map"></i> Карта</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        
+        <!-- ================= ГЛАВНАЯ СТРАНИЦА ================= -->
+        <div id="home-view" class="view-section active">
+            <div class="weather-grid">
+                <!-- Блок текущей погоды -->
+                <div class="current-weather card">
+                    <div class="current-header">
+                        <div>
+                            <h1 id="city-name">Москва</h1>
+                            <p id="current-date">Загрузка...</p>
+                        </div>
+                        <button class="favorite-btn"><i class="far fa-heart"></i></button>
+                    </div>
+
+                    <div class="current-body">
+                        <div class="temp-section">
+                            <i id="main-icon" class="fas fa-sun weather-icon-large"></i>
+                            <div>
+                                <div class="temperature" id="current-temp">--°</div>
+                                <div class="description" id="weather-desc">Загрузка...</div>
+                            </div>
+                        </div>
+
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <i class="fas fa-wind"></i>
+                                <div>
+                                    <span>Ветер</span>
+                                    <strong id="wind-speed">-- м/с</strong>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-tint"></i>
+                                <div>
+                                    <span>Влажность</span>
+                                    <strong id="humidity">--%</strong>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-compress-alt"></i>
+                                <div>
+                                    <span>Давление</span>
+                                    <strong id="pressure">-- мм</strong>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-eye"></i>
+                                <div>
+                                    <span>Видимость</span>
+                                    <strong id="visibility">-- км</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок прогноза на 3 дня -->
+                <div class="forecast card">
+                    <div class="forecast-header">
+                        <h2>Прогноз на 3 дня</h2>
+                    </div>
+                    <div class="forecast-list" id="forecast-list-mini">
+                        <div style="text-align: center; color: var(--text-muted);">Загрузка прогноза...</div>
+                    </div>
+                    <button class="view-all-btn" onclick="document.querySelector('[data-target=\'forecast-view\']').click()">Посмотреть на 10 дней <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            
+            <!-- Блок новостей -->
+            <section class="news-section">
+                <h2>Новости погоды</h2>
+                <div class="news-grid" id="news-container">
+                    <!-- Заполняется через JS -->
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= ПОЧАСОВОЙ ПРОГНОЗ ================= -->
+        <div id="hourly-view" class="view-section" style="display: none;">
+            <div class="card full-width-card">
+                <div class="current-header">
+                    <h2>Почасовой прогноз <span class="forecast-city-name" style="color: var(--primary-color); font-weight: normal; font-size: 1.2rem;"></span></h2>
+                </div>
+                <div class="hourly-forecast-container">
+                    <div class="hourly-forecast-scroll" id="forecast-list-hourly">
+                        <!-- Заполняется через JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ПРОГНОЗ НА 10 ДНЕЙ ================= -->
+        <div id="forecast-view" class="view-section" style="display: none;">
+            <div class="card full-width-card">
+                <div class="current-header">
+                    <h2>Прогноз на 10 дней <span class="forecast-city-name" style="color: var(--primary-color); font-weight: normal; font-size: 1.2rem;"></span></h2>
+                </div>
+                <div class="long-forecast-grid" id="forecast-list-10">
+                    <!-- Заполняется через JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ИНТЕРАКТИВНАЯ КАРТА ================= -->
+        <div id="map-view" class="view-section" style="display: none;">
+            <div class="card full-width-card" style="padding: 1.5rem;">
+                <h2 style="margin-bottom: 1.5rem;">Погодная карта <span class="forecast-city-name" style="color: var(--primary-color); font-weight: normal; font-size: 1.2rem;"></span></h2>
+                <div id="map-container" style="width: 100%; height: 65vh; border-radius: 1rem; overflow: hidden; background: #e2e8f0; position: relative;">
+                    <iframe 
+                        id="weather-map-iframe" 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0" 
+                        src="" 
+                        allow="geolocation"
+                        style="position: absolute; top:0; left:0; border:none; z-index: 10;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Модальное окно для новостей -->
+    <div id="news-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Заголовок</h2>
+            <img id="modal-image" src="" alt="News">
+            <p id="modal-body">Текст новости...</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="logo">
+                <i class="fas fa-cloud"></i>
+                <span>MWeather</span>
+            </div>
+            <p>&copy; 2026 MWeather. Все права защищены.</p>
+        </div>
+    </footer>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
