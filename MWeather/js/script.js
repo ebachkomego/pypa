@@ -175,14 +175,26 @@ async function getWeather(cityName) {
         }
         
         
-        const lat = geoData.results[0].latitude;
-        const lon = geoData.results[0].longitude;
+        let results = geoData.results;
         
-        // Если результат сильно отличается от запроса (как Бобруйское vs Бобруйск),
-        // но это единственный результат, мы его берем, но можем предпочесть имя пользователя
-        // Однако лучше найти лучший результат из списка
-        const results = geoData.results;
-        
+        // Если результаты выглядят "мелкими" (нет крупных городов), пробуем поискать латиницей
+        if (results[0].population < 5000 || !results[0].population) {
+            try {
+                // Простая транслитерация для поиска (Бобруйск -> Bobruisk)
+                const translit = cityName
+                    .replace(/б/g, 'b').replace(/о/g, 'o').replace(/р/g, 'r')
+                    .replace(/у/g, 'u').replace(/й/g, 'i').replace(/с/g, 's').replace(/к/g, 'k');
+                
+                const fallbackUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(translit)}&count=10&language=ru&format=json`;
+                const fallbackRes = await fetch(fallbackUrl);
+                const fallbackData = await fallbackRes.json();
+                
+                if (fallbackData.results && fallbackData.results.length > 0) {
+                    results = [...results, ...fallbackData.results];
+                }
+            } catch(e) { console.warn("Fallback search failed", e); }
+        }
+
         // Сортируем результаты по населению, чтобы крупные города были первыми
         results.sort((a, b) => (b.population || 0) - (a.population || 0));
         
@@ -190,12 +202,15 @@ async function getWeather(cityName) {
         
         // Если есть точное совпадение по имени (без учета регистра), берем его
         const exactMatch = results.find(res => res.name.toLowerCase() === cityName.toLowerCase());
-        if (exactMatch) {
+        if (exactMatch && (exactMatch.population || 0) > (bestResult.population || 0) * 0.1) {
             bestResult = exactMatch;
         }
         
-        // Используем имя из поиска для отображения, чтобы не было "Бобруйское" вместо "Бобруйск"
+        // Используем имя из поиска для отображения
         const displayName = cityName.charAt(0).toUpperCase() + cityName.slice(1).toLowerCase();
+        
+        console.log(`Selected city: ${bestResult.name} (${bestResult.country}), population: ${bestResult.population}, coords: ${bestResult.latitude}, ${bestResult.longitude}`);
+        
         fetchWeather(bestResult.latitude, bestResult.longitude, displayName);
         
     } catch (error) {
@@ -349,11 +364,14 @@ function updateMap(lat, lon) {
     const iframe = document.getElementById('weather-map-iframe');
     // Используем обновленный URL для Windy (версия 2)
     // Добавляем параметры для отображения ветра и интерактивности
-    const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&zoom=6&level=surface&overlay=temperature&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1`;
+    // Добавляем timestamp для сброса кэша iframe и принудительного обновления
+    const url = `https://embed.windy.com/embed2.html?lat=${lat}&lon=${lon}&zoom=7&level=surface&overlay=temperature&product=ecmwf&menu=&message=true&marker=true&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1&t=${Date.now()}`;
+    
+    console.log(`Updating map to: ${lat}, ${lon}`);
     
     setTimeout(() => {
         iframe.src = url;
-    }, 200); 
+    }, 300); 
 }
 
 function getWeatherDescription(code) {
