@@ -49,8 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initTicker();
     renderFavorites();
     renderGallery();
+    setupLocateButton();
     initLocation();
 });
+
+function setupLocateButton() {
+    const locateBtn = document.getElementById('locate-btn');
+    if (locateBtn) {
+        locateBtn.addEventListener('click', () => {
+            initLocation(true); // true means forced by user
+        });
+    }
+}
 
 function setupSearchEvents() {
     const searchBtn = document.getElementById('search-btn');
@@ -350,33 +360,71 @@ function updateDate() {
     dateElement.textContent = today.toLocaleDateString('ru-RU', options);
 }
 
-function initLocation() {
-    document.getElementById('city-name').textContent = "Определение локации...";
-    document.getElementById('weather-desc').textContent = "Запрашиваем данные...";
+function initLocation(isForced = false) {
+    const cityNameEl = document.getElementById('city-name');
+    const weatherDescEl = document.getElementById('weather-desc');
+    
+    cityNameEl.textContent = "Определение локации...";
+    weatherDescEl.textContent = "Запрашиваем данные...";
+
+    const options = { 
+        enableHighAccuracy: true, 
+        timeout: 10000, // Увеличили до 10 сек для мобильных устройств
+        maximumAge: 60000 
+    };
 
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
-                // Более надежное API для определения города
                 const cityName = await getCityNameByCoords(lat, lon);
                 document.getElementById('city-search').value = cityName;
                 fetchWeather(lat, lon, cityName);
             },
-            (error) => {
-                console.warn("Геолокация недоступна.", error);
-                getWeather('Москва'); 
+            async (error) => {
+                console.warn("Браузерная геолокация недоступна или отклонена.", error);
+                
+                // Если не получилось по GPS, пробуем по IP (особенно важно для мобильных)
+                const ipLocation = await getLocationByIP();
+                if (ipLocation) {
+                    document.getElementById('city-search').value = ipLocation.city;
+                    fetchWeather(ipLocation.lat, ipLocation.lon, ipLocation.city);
+                } else {
+                    // Крайний случай - Москва
+                    getWeather('Москва'); 
+                }
             },
-            { 
-                enableHighAccuracy: true, 
-                timeout: 5000, 
-                maximumAge: 0 
-            }
+            options
         );
     } else {
-        getWeather('Москва');
+        getLocationByIP().then(ipLocation => {
+            if (ipLocation) {
+                document.getElementById('city-search').value = ipLocation.city;
+                fetchWeather(ipLocation.lat, ipLocation.lon, ipLocation.city);
+            } else {
+                getWeather('Москва');
+            }
+        });
     }
+}
+
+async function getLocationByIP() {
+    try {
+        // Используем ip-api.com или ipapi.co (бесплатные лимиты)
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.latitude && data.longitude) {
+            return {
+                lat: data.latitude,
+                lon: data.longitude,
+                city: data.city || "Ваш город"
+            };
+        }
+    } catch (e) {
+        console.error("Ошибка при получении локации по IP:", e);
+    }
+    return null;
 }
 
 async function getCityNameByCoords(lat, lon) {
