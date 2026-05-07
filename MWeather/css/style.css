@@ -190,8 +190,31 @@ body.dark-theme {
 .nav-links a:hover, .nav-links a.active { color: white; border-bottom: 2px solid white; padding-bottom: 2px;}
 
 .icon-combo { position: relative; display: inline-block; width: 1.2em; height: 1em; }
-.icon-combo .fa-cloud { position: absolute; left: 0; top: 0; color: var(--cloud-color); font-size: 1em; }
-.icon-combo .fa-sun { position: absolute; right: -0.25em; top: -0.25em; color: var(--sun-color); font-size: 0.65em; }
+.icon-combo .fa-cloud { position: absolute; left: 0; top: 0; color: var(--cloud-color); }
+.icon-combo .fa-sun { position: absolute; right: -0.25em; top: -0.25em; color: var(--sun-color); }
+.icon-combo .bolt-icon { position: absolute; right: -0.2em; top: -0.1em; color: var(--sun-color); }
+.icon-combo .rain-icon { position: absolute; left: 0.55em; top: 0.6em; color: var(--rain-color); }
+
+/* Size variants for combo icons */
+.icon-combo.weather-icon-large .fa-cloud { font-size: 5rem; }
+.icon-combo.weather-icon-large .fa-sun { font-size: 2.2rem; }
+.icon-combo.weather-icon-large .bolt-icon { font-size: 2.4rem; }
+.icon-combo.weather-icon-large .rain-icon { font-size: 1.2rem; }
+
+.icon-combo.hourly-icon .fa-cloud { font-size: 2rem; }
+.icon-combo.hourly-icon .fa-sun { font-size: 0.9rem; }
+.icon-combo.hourly-icon .bolt-icon { font-size: 1.1rem; }
+.icon-combo.hourly-icon .rain-icon { font-size: 0.9rem; }
+
+.icon-combo.long-forecast-icon .fa-cloud { font-size: 2.5rem; }
+.icon-combo.long-forecast-icon .fa-sun { font-size: 1rem; }
+.icon-combo.long-forecast-icon .bolt-icon { font-size: 1.2rem; }
+.icon-combo.long-forecast-icon .rain-icon { font-size: 1rem; }
+
+.icon-combo.forecast-mini-icon .fa-cloud { font-size: 1.2rem; }
+.icon-combo.forecast-mini-icon .fa-sun { font-size: 0.95rem; }
+.icon-combo.forecast-mini-icon .bolt-icon { font-size: 1rem; }
+.icon-combo.forecast-mini-icon .rain-icon { font-size: 0.9rem; }
 
 /* Main Content */
 .main-content { flex: 1; padding: 2rem 0; }
