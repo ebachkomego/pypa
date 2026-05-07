@@ -7,7 +7,8 @@
     --text-muted: #6b7280;
     --card-bg: #ffffff;
     --cloud-color: #64748b;
-    --sun-color: #f59e0b;
+    --sun-color: #64748b;
+    --rain-color: #38bdf8;
     --accent-color: #3b82f6;
     --border-radius: 1.5rem;
     --transition: 0.3s ease;
@@ -21,7 +22,8 @@ body.dark-theme {
     --text-muted: #94a3b8;
     --card-bg: #111827;
     --cloud-color: #94a3b8;
-    --sun-color: #fbbf24;
+    --sun-color: #94a3b8;
+    --rain-color: #38bdf8;
     --accent-color: #38bdf8;
 }
 
@@ -186,7 +188,7 @@ body.dark-theme {
 .nav-links { display: flex; gap: 1.5rem; }
 .nav-links a { color: #bfdbfe; text-decoration: none; font-weight: 500; transition: var(--transition); display: flex; align-items: center; gap: 0.3em; cursor: pointer; }
 .nav-links a:hover, .nav-links a.active { color: white; border-bottom: 2px solid white; padding-bottom: 2px;}
-.nav-links a[data-target="home-view"] .fa-cloud-sun { color: #fbbf24; }
+.nav-links a[data-target="home-view"] .fa-cloud-sun { color: var(--cloud-color); }
 
 /* Main Content */
 .main-content { flex: 1; padding: 2rem 0; }
@@ -211,7 +213,7 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 
 .current-body { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
 .temp-section { display: flex; align-items: center; gap: 1.5rem; }
-.weather-icon-large { font-size: 5rem; color: #f59e0b; }
+.weather-icon-large { font-size: 5rem; color: var(--cloud-color); }
 .temperature { font-size: 4.5rem; font-weight: 300; line-height: 1; }
 .description { font-size: 1.25rem; color: var(--text-muted); text-transform: capitalize; }
 
@@ -270,7 +272,7 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .long-forecast-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #dbeafe; background: white;}
 .long-forecast-card .date { color: var(--text-muted); font-size: 0.9rem;}
 .long-forecast-card .day { font-weight: bold; font-size: 1.1rem; text-transform: capitalize;}
-.long-forecast-card i { font-size: 2.5rem; margin: 0.5rem 0; color: #f59e0b;}
+.long-forecast-card i { font-size: 2.5rem; margin: 0.5rem 0; color: var(--cloud-color);}
 .long-forecast-card .temps { font-size: 1.3rem; font-weight: bold;}
 .long-forecast-card .temps span { color: var(--text-muted); font-size: 1rem; font-weight: normal; margin-left: 0.5rem;}
 
@@ -285,15 +287,14 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .hourly-card { background: #f8fafc; padding: 1.5rem 1rem; border-radius: 1.5rem; text-align: center; min-width: 100px; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; transition: var(--transition); border: 1px solid transparent;}
 .hourly-card:hover { background: white; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: #dbeafe;}
 .hourly-card .time { font-weight: bold; font-size: 1rem;}
-.hourly-card > i { font-size: 2rem; color: #f59e0b; margin: 0.5rem 0;}
+.hourly-card > i { font-size: 2rem; color: var(--cloud-color); margin: 0.5rem 0;}
 .hourly-card .temp { font-size: 1.3rem; font-weight: bold; }
 .hourly-card .humidity { color: var(--primary-color); font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 0.2rem;}
 .hourly-card .humidity i { color: #3b82f6; font-size: 0.9rem; } /* Капли теперь голубые */
 
 /* Cloud and rain icons */
-.fa-cloud, .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-cloud-bolt, .fa-smog { color: var(--cloud-color); }
-.fa-cloud-sun { color: var(--sun-color); }
-.fa-tint, .fas.fa-tint, .fa-umbrella, .fa-snowflake { color: var(--accent-color); }
+.fa-cloud, .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-cloud-bolt, .fa-smog, .fa-cloud-sun, .fa-sun { color: var(--cloud-color); }
+.fa-tint, .fas.fa-tint, .fa-umbrella, .fa-snowflake { color: var(--rain-color); }
 
 /* Modal */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px);}
