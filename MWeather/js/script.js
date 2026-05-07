@@ -1,87 +1,325 @@
 // script.js
 
-// Глобальные переменные
 let currentLat = 55.7558;
 let currentLon = 37.6173;
-
-// Массив с моковыми новостями
-const newsData = [
+let favorites = loadFavorites();
+let currentGalleryIndex = null;
+const galleryItems = [
     {
-        title: "Глобальное потепление",
-        summary: "Как изменение климата влияет на ежедневную погоду в вашем регионе.",
-        fullText: "Ученые отмечают, что средняя температура на планете продолжает расти. В нашем регионе это приведет к более частым температурным аномалиям, мягким зимам и очень жаркому лету. Рекомендуется следить за изменениями климата и адаптировать свой образ жизни.",
-        img: "https://images.unsplash.com/photo-1561484930-998b6a7b22e8?auto=format&fit=crop&w=800&q=80"
+        url: 'https://images.unsplash.com/photo-1501973801540-537f08ccae7b?auto=format&fit=crop&w=800&q=80',
+        title: 'Спокойное небо',
+        description: 'Чистое небо и солнце – отличный день для прогулки.'
     },
     {
-        title: "Сезон дождей",
-        summary: "Ожидаются сильные осадки в центральной части страны на следующей неделе.",
-        fullText: "Синоптики предупреждают о надвигающемся циклоне, который принесет с собой затяжные дожди. Ожидается выпадение более 30% месячной нормы осадков за несколько дней. Водителям рекомендуется быть осторожнее на дорогах из-за ухудшения видимости и риска аквапланирования.",
-        img: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=800&q=80"
+        url: 'https://images.unsplash.com/photo-1470115636492-6d2b56f083c3?auto=format&fit=crop&w=800&q=80',
+        title: 'Облака на закате',
+        description: 'Тёплые оттенки заката делают облака мягкими и красивыми.'
     },
     {
-        title: "Магнитные бури",
-        summary: "Вспышки на солнце приведут к сильным геомагнитным бурям в эти выходные.",
-        fullText: "Обсерватории зафиксировали серию сильных вспышек на Солнце класса M и X. Облако плазмы достигнет Земли в субботу вечером, что вызовет магнитную бурю класса G3. Метеозависимым людям следует контролировать давление, больше отдыхать и избегать стрессов.",
-        img: "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=800&q=80"
+        url: 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=800&q=80',
+        title: 'Дождливая сцена',
+        description: 'Пейзаж с дождевыми тучами напоминает о внимательном отношении к погоде.'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80',
+        title: 'Гроза на горизонте',
+        description: 'Могут появиться мощные грозы с электрическими разрядами.'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&w=800&q=80',
+        title: 'Облака над водой',
+        description: 'Тихий вечер у озера с низкими облаками.'
+    },
+    {
+        url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80',
+        title: 'Лёгкая морось',
+        description: 'Нежная морось добавляет атмосферу уюта.'
     }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
     updateDate();
-    initLocation(); 
     setupNavigation();
-    renderNews();
-    
+    setupThemeSwitcher();
+    setupFavoriteButton();
+    setupFavoritesClick();
+    setupSearchSuggestions();
+    setupSearchEvents();
+    setupGalleryForm();
+    initTicker();
+    renderFavorites();
+    renderGallery();
+    initLocation();
+});
+
+function setupSearchEvents() {
     const searchBtn = document.getElementById('search-btn');
     const searchInput = document.getElementById('city-search');
-    
+
     searchBtn.addEventListener('click', () => {
         const city = searchInput.value.trim();
-        if(city) getWeather(city);
+        if (city) getWeather(city);
     });
 
     searchInput.addEventListener('keypress', (e) => {
-        if(e.key === 'Enter') {
+        if (e.key === 'Enter') {
             const city = searchInput.value.trim();
-            if(city) getWeather(city);
+            if (city) getWeather(city);
         }
-    });
-
-    // Модальное окно новостей
-    document.querySelector('.close-modal').onclick = () => {
-        document.getElementById('news-modal').style.display = "none";
-    }
-    window.onclick = (e) => {
-        const modal = document.getElementById('news-modal');
-        if (e.target === modal) {
-            modal.style.display = "none";
-        }
-    }
-});
-
-function renderNews() {
-    const container = document.getElementById('news-container');
-    container.innerHTML = '';
-    newsData.forEach((news, idx) => {
-        const article = `
-            <article class="news-card" onclick="openNews(${idx})">
-                <img src="${news.img}" alt="Погода">
-                <div class="news-content">
-                    <h3>${news.title}</h3>
-                    <p>${news.summary}</p>
-                </div>
-            </article>
-        `;
-        container.insertAdjacentHTML('beforeend', article);
     });
 }
 
-window.openNews = function(idx) {
-    const modal = document.getElementById('news-modal');
-    document.getElementById('modal-title').textContent = newsData[idx].title;
-    document.getElementById('modal-image').src = newsData[idx].img;
-    document.getElementById('modal-body').textContent = newsData[idx].fullText;
-    modal.style.display = "block";
+function setupSearchSuggestions() {
+    const searchInput = document.getElementById('city-search');
+    const suggestionsList = document.getElementById('suggestions-list');
+
+    searchInput.addEventListener('input', debounce(async (e) => {
+        const value = e.target.value.trim();
+        if (!value) {
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+            return;
+        }
+
+        const suggestions = await fetchCitySuggestions(value);
+        if (!suggestions.length) {
+            suggestionsList.innerHTML = '<li class="suggestion-item">Ничего не найдено</li>';
+            suggestionsList.style.display = 'block';
+            return;
+        }
+
+        suggestionsList.innerHTML = suggestions
+            .map(item => `<li class="suggestion-item" data-name="${item.name}">${item.name}, ${item.country}</li>`)
+            .join('');
+        suggestionsList.style.display = 'block';
+    }, 250));
+
+    suggestionsList.addEventListener('click', (e) => {
+        const item = e.target.closest('.suggestion-item');
+        if (!item || !item.dataset.name) return;
+        const city = item.dataset.name;
+        document.getElementById('city-search').value = city;
+        suggestionsList.innerHTML = '';
+        suggestionsList.style.display = 'none';
+        getWeather(city);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-bar')) {
+            suggestionsList.innerHTML = '';
+            suggestionsList.style.display = 'none';
+        }
+    });
+}
+
+async function fetchCitySuggestions(query) {
+    try {
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=ru&format=json`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.results) return [];
+        return data.results.map(item => ({ name: item.name, country: item.country }));
+    } catch (error) {
+        console.error('Ошибка поиска подсказок:', error);
+        return [];
+    }
+}
+
+function setupThemeSwitcher() {
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-theme');
+        localStorage.setItem('siteTheme', isDark ? 'dark' : 'light');
+        updateThemeButton();
+    });
+    loadTheme();
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('siteTheme') || 'light';
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+    updateThemeButton();
+}
+
+function updateThemeButton() {
+    const button = document.getElementById('theme-toggle');
+    if (document.body.classList.contains('dark-theme')) {
+        button.innerHTML = '<i class="fas fa-sun"></i><span>Светлая тема</span>';
+    } else {
+        button.innerHTML = '<i class="fas fa-moon"></i><span>Тёмная тема</span>';
+    }
+}
+
+function loadFavorites() {
+    try {
+        const stored = localStorage.getItem('favoriteCities');
+        return stored ? JSON.parse(stored) : [];
+    } catch {
+        return [];
+    }
+}
+
+function saveFavorites() {
+    localStorage.setItem('favoriteCities', JSON.stringify(favorites));
+}
+
+function renderFavorites() {
+    const container = document.getElementById('favorites-list');
+    if (!favorites.length) {
+        container.innerHTML = '<p class="empty-favorites">Список избранных пуст. Добавьте текущий город нажатием на сердечко.</p>';
+        return;
+    }
+    container.innerHTML = favorites
+        .map(city => `
+            <div class="favorite-item" data-city="${city}">
+                <span>${city}</span>
+                <button class="remove-fav" aria-label="Удалить из избранного">&times;</button>
+            </div>
+        `)
+        .join('');
+}
+
+function setupFavoritesClick() {
+    const container = document.getElementById('favorites-list');
+    container.addEventListener('click', (e) => {
+        const item = e.target.closest('.favorite-item');
+        if (!item) return;
+        const city = item.dataset.city;
+        if (e.target.matches('.remove-fav')) {
+            e.stopPropagation();
+            removeFavorite(city);
+            return;
+        }
+        if (city) getWeather(city);
+    });
+}
+
+function setupFavoriteButton() {
+    const button = document.querySelector('.favorite-btn');
+    button.addEventListener('click', () => {
+        const city = document.getElementById('city-name').textContent.trim();
+        if (!city) return;
+        toggleFavorite(city);
+    });
+}
+
+function toggleFavorite(city) {
+    const existingIndex = favorites.findIndex(item => item.toLowerCase() === city.toLowerCase());
+    if (existingIndex >= 0) {
+        favorites.splice(existingIndex, 1);
+    } else {
+        favorites.unshift(city);
+    }
+    saveFavorites();
+    renderFavorites();
+    updateFavoriteButton(city);
+}
+
+function removeFavorite(city) {
+    favorites = favorites.filter(item => item.toLowerCase() !== city.toLowerCase());
+    saveFavorites();
+    renderFavorites();
+    updateFavoriteButton(document.getElementById('city-name').textContent.trim());
+}
+
+function isFavorite(city) {
+    return favorites.some(item => item.toLowerCase() === city.toLowerCase());
+}
+
+function updateFavoriteButton(city) {
+    const icon = document.querySelector('.favorite-btn i');
+    if (isFavorite(city)) {
+        icon.className = 'fas fa-heart';
+    } else {
+        icon.className = 'far fa-heart';
+    }
+}
+
+function setupGalleryForm() {
+    const form = document.getElementById('add-image-form');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const input = document.getElementById('image-url');
+        const url = input.value.trim();
+        if (!url) return;
+
+        galleryItems.unshift({
+            url,
+            title: 'Новое изображение',
+            description: 'Пользовательское изображение, добавленное через URL.'
+        });
+        input.value = '';
+        renderGallery();
+        showGalleryInfo(0);
+    });
+}
+
+function renderGallery() {
+    if (currentGalleryIndex === null && galleryItems.length) {
+        showGalleryInfo(0);
+        return;
+    }
+
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = galleryItems
+        .map((item, index) => `
+            <div class="gallery-card ${currentGalleryIndex === index ? 'selected' : ''}" data-index="${index}">
+                <img src="${item.url}" alt="${item.title}" loading="lazy">
+            </div>
+        `)
+        .join('');
+
+    grid.querySelectorAll('.gallery-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const index = Number(card.dataset.index);
+            showGalleryInfo(index);
+        });
+    });
+}
+
+function showGalleryInfo(index) {
+    currentGalleryIndex = index;
+    const info = document.getElementById('gallery-info');
+    const item = galleryItems[index];
+    if (!item) return;
+    info.innerHTML = `
+        <h3>${item.title}</h3>
+        <p>${item.description}</p>
+    `;
+    renderGallery();
+}
+
+function initTicker() {
+    const ticker = document.getElementById('news-ticker');
+    const speedControl = document.getElementById('ticker-speed');
+    const directionSelect = document.getElementById('ticker-direction');
+    const styleSelect = document.getElementById('ticker-style');
+    const speedValue = document.getElementById('ticker-speed-value');
+
+    const updateTicker = () => {
+        const speed = Number(speedControl.value);
+        speedValue.textContent = speed;
+        ticker.className = `ticker-text ${styleSelect.value}`;
+        const duration = Math.max(10, 60 - speed * 1.5);
+        ticker.style.animation = `${duration}s marquee-${directionSelect.value} linear infinite`;
+    };
+
+    speedControl.addEventListener('input', updateTicker);
+    directionSelect.addEventListener('change', updateTicker);
+    styleSelect.addEventListener('change', updateTicker);
+    updateTicker();
+}
+
+function debounce(fn, delay) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+    };
 }
 
 function setupNavigation() {
@@ -226,6 +464,12 @@ async function getWeather(cityName) {
             return (b.population || 0) - (a.population || 0);
         });
         
+        if (!results.length) {
+            alert('Город не найден. Попробуйте другой запрос.');
+            document.getElementById('city-name').textContent = 'Ошибка';
+            return;
+        }
+
         let bestResult = results[0];
         
         // Используем имя из поиска для отображения
