@@ -190,31 +190,8 @@ body.dark-theme {
 .nav-links a:hover, .nav-links a.active { color: white; border-bottom: 2px solid white; padding-bottom: 2px;}
 
 .icon-combo { position: relative; display: inline-block; width: 1.2em; height: 1em; }
-.icon-combo .fa-cloud { position: absolute; left: 0; top: 0; color: var(--cloud-color); }
-.icon-combo .fa-sun { position: absolute; right: -0.25em; top: -0.25em; color: var(--sun-color); }
-.icon-combo .bolt-icon { position: absolute; right: -0.2em; top: -0.1em; color: var(--sun-color); }
-.icon-combo .rain-icon { position: absolute; left: 0.55em; top: 0.6em; color: var(--rain-color); }
-
-/* Size variants for combo icons */
-.icon-combo.weather-icon-large .fa-cloud { font-size: 5rem; }
-.icon-combo.weather-icon-large .fa-sun { font-size: 2.2rem; }
-.icon-combo.weather-icon-large .bolt-icon { font-size: 2.4rem; }
-.icon-combo.weather-icon-large .rain-icon { font-size: 1.2rem; }
-
-.icon-combo.hourly-icon .fa-cloud { font-size: 2rem; }
-.icon-combo.hourly-icon .fa-sun { font-size: 0.9rem; }
-.icon-combo.hourly-icon .bolt-icon { font-size: 1.1rem; }
-.icon-combo.hourly-icon .rain-icon { font-size: 0.9rem; }
-
-.icon-combo.long-forecast-icon .fa-cloud { font-size: 2.5rem; }
-.icon-combo.long-forecast-icon .fa-sun { font-size: 1rem; }
-.icon-combo.long-forecast-icon .bolt-icon { font-size: 1.2rem; }
-.icon-combo.long-forecast-icon .rain-icon { font-size: 1rem; }
-
-.icon-combo.forecast-mini-icon .fa-cloud { font-size: 1.2rem; }
-.icon-combo.forecast-mini-icon .fa-sun { font-size: 0.95rem; }
-.icon-combo.forecast-mini-icon .bolt-icon { font-size: 1rem; }
-.icon-combo.forecast-mini-icon .rain-icon { font-size: 0.9rem; }
+.icon-combo .fa-cloud { position: absolute; left: 0; top: 0; color: var(--cloud-color); font-size: 1em; }
+.icon-combo .fa-sun { position: absolute; right: -0.25em; top: -0.25em; color: var(--sun-color); font-size: 0.65em; }
 
 /* Main Content */
 .main-content { flex: 1; padding: 2rem 0; }
@@ -381,88 +358,60 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .favorite-btn:hover { color: #dc2626; transform: scale(1.08); }
 .favorite-btn.active { color: #dc2626; }
 
-/* Weather Icons - Enhanced multi-color support */
 .weather-icon-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
     margin: 0.5rem 0;
 }
 
 .weather-icon-wrapper.large {
-    width: 6rem;
-    height: 6rem;
+    width: 8rem;
+    height: 8rem;
 }
 
 .weather-icon-wrapper i {
     position: absolute;
-    font-size: 2.8rem;
+    font-size: 3.5rem;
 }
 
 .weather-icon-wrapper.large i {
-    font-size: 5rem;
+    font-size: 6.5rem;
 }
 
 /* Base icon colors */
 .fa-cloud, .fa-smog { color: var(--cloud-color) !important; }
 .fa-sun { color: var(--sun-color) !important; }
-.fa-cloud-sun { color: var(--sun-color) !important; } /* Fallback */
+.fa-cloud-sun { color: var(--sun-color) !important; }
 .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-tint { color: var(--rain-color) !important; }
 .fa-bolt, .fa-cloud-bolt { color: #fbbf24 !important; }
 .fa-snowflake { color: #7dd3fc !important; }
 
-/* Layered icon styles */
-.icon-layer-sun { font-size: 1.6rem !important; transform: translate(0.8rem, -0.8rem); color: var(--sun-color) !important; z-index: 1; }
-.icon-layer-cloud { color: var(--cloud-color) !important; z-index: 2; }
-.icon-layer-rain { font-size: 1.4rem !important; transform: translate(0.4rem, 0.6rem); color: var(--rain-color) !important; z-index: 3; }
-.icon-layer-bolt { font-size: 1.4rem !important; transform: translate(0, 0.7rem); color: #fbbf24 !important; z-index: 3; }
+/* Layered icon styles - more pronounced offsets and colors */
+.icon-layer-sun { font-size: 2.2rem !important; transform: translate(1.2rem, -1.2rem); color: var(--sun-color) !important; z-index: 1; }
+.icon-layer-cloud { font-size: 3.5rem !important; color: var(--cloud-color) !important; z-index: 2; }
+.icon-layer-rain { font-size: 1.8rem !important; transform: translate(0.5rem, 0.8rem); color: var(--rain-color) !important; z-index: 3; }
+.icon-layer-bolt { font-size: 1.8rem !important; transform: translate(0, 1rem); color: #fbbf24 !important; z-index: 3; }
 
-.weather-icon-wrapper.large .icon-layer-sun { font-size: 2.8rem !important; transform: translate(1.4rem, -1.4rem); }
-.weather-icon-wrapper.large .icon-layer-rain { font-size: 2.5rem !important; transform: translate(0.7rem, 1rem); }
-.weather-icon-wrapper.large .icon-layer-bolt { font-size: 2.5rem !important; transform: translate(0, 1.2rem); }
+.weather-icon-wrapper.large .icon-layer-sun { font-size: 3.8rem !important; transform: translate(1.8rem, -1.8rem); }
+.weather-icon-wrapper.large .icon-layer-cloud { font-size: 6.5rem !important; }
+.weather-icon-wrapper.large .icon-layer-rain { font-size: 3.2rem !important; transform: translate(1rem, 1.4rem); }
+.weather-icon-wrapper.large .icon-layer-bolt { font-size: 3.2rem !important; transform: translate(0, 1.6rem); }
 
-/* Override for all forecast and weather elements */
-.long-forecast-card .fa-cloud,
-.long-forecast-card .fa-cloud-rain,
-.long-forecast-card .fa-cloud-showers-heavy,
-.long-forecast-card .fa-cloud-showers-water,
-.long-forecast-card .fa-cloud-bolt,
-.long-forecast-card .fa-smog {
-    color: var(--cloud-color) !important;
+.mini-icon-container { width: 2.5rem; display: flex; justify-content: center; }
+.mini-icon-container .weather-icon-wrapper { 
+    width: 2rem; 
+    height: 2rem; 
+    margin: 0;
 }
-
-.long-forecast-card .fa-sun {
-    color: var(--sun-color) !important;
-}
-
-.hourly-card .fa-cloud,
-.hourly-card .fa-cloud-rain,
-.hourly-card .fa-cloud-showers-heavy,
-.hourly-card .fa-cloud-showers-water,
-.hourly-card .fa-cloud-bolt,
-.hourly-card .fa-smog {
-    color: var(--cloud-color) !important;
-}
-
-.hourly-card .fa-sun {
-    color: var(--sun-color) !important;
-}
-
-.forecast-item .fa-cloud,
-.forecast-item .fa-cloud-rain,
-.forecast-item .fa-cloud-showers-heavy,
-.forecast-item .fa-cloud-showers-water,
-.forecast-item .fa-cloud-bolt,
-.forecast-item .fa-smog {
-    color: var(--cloud-color) !important;
-}
-
-.forecast-item .fa-sun {
-    color: var(--sun-color) !important;
-}
+.mini-icon-container .weather-icon-wrapper i { font-size: 1.5rem; }
+.mini-icon-container .icon-layer-sun { font-size: 0.9rem !important; transform: translate(0.4rem, -0.4rem); }
+.mini-icon-container .icon-layer-cloud { font-size: 1.5rem !important; }
+.mini-icon-container .icon-layer-rain { font-size: 0.8rem !important; transform: translate(0.2rem, 0.4rem); }
+.mini-icon-container .icon-layer-bolt { font-size: 0.8rem !important; transform: translate(0, 0.5rem); }
 
 /* Modal */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px);}
