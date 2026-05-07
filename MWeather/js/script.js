@@ -268,7 +268,7 @@ function renderGallery() {
     grid.innerHTML = galleryItems
         .map((item, index) => `
             <div class="gallery-card ${currentGalleryIndex === index ? 'selected' : ''}" data-index="${index}">
-                <img src="${item.url}" alt="${item.title}" loading="lazy">
+                <img src="${item.url}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=800&q=80'; this.onerror=null;">
             </div>
         `)
         .join('');
@@ -543,7 +543,13 @@ function updateUI(data) {
     document.getElementById('weather-desc').textContent = weatherInfo.desc;
     
     const mainIcon = document.getElementById('main-icon');
-    mainIcon.className = `fas ${weatherInfo.icon} weather-icon-large`;
+    if (mainIcon) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = weatherInfo.iconHTML.replace('weather-icon-wrapper', 'weather-icon-wrapper large');
+        const newIcon = tempDiv.firstElementChild;
+        newIcon.id = 'main-icon';
+        mainIcon.replaceWith(newIcon);
+    }
     
     const forecastMini = document.getElementById('forecast-list-mini');
     const forecast10 = document.getElementById('forecast-list-10');
@@ -567,7 +573,7 @@ function updateUI(data) {
             const hourlyHtml = `
                 <div class="hourly-card">
                     <div class="time">${i === currentIndex ? 'Сейчас' : hours}</div>
-                    <i class="fas ${info.icon}"></i>
+                    ${info.iconHTML}
                     <div class="temp">${temp}°</div>
                     <div class="humidity"><i class="fas fa-tint"></i> ${hum}%</div>
                 </div>
@@ -588,7 +594,9 @@ function updateUI(data) {
             const itemHTML = `
                 <div class="forecast-item">
                     <div style="display:flex; align-items:center; gap: 10px; width: 45%;">
-                        <i class="fas ${info.icon}" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                        <div style="width: 2rem; display: flex; justify-content: center;">
+                            ${info.iconHTML.replace('weather-icon-wrapper', '').replace('3.5rem', '1.5rem').replace('3.5rem', '1.5rem').replace('2.8rem', '1.2rem')}
+                        </div>
                         <span style="text-transform: capitalize; font-weight: 500;">${dayName}</span>
                     </div>
                     <div style="width: 25%; text-align: left; color: var(--text-muted); font-size: 0.85em;">
@@ -614,10 +622,12 @@ function updateUI(data) {
             
             const item10 = `
                 <div class="long-forecast-card">
-                    <div class="day">${i === 0 ? 'Сегодня' : dayName}</div>
-                    <div class="date">${dateStr}</div>
-                    <i class="fas ${info.icon}"></i>
-                    <div style="color: var(--text-muted); font-size: 0.85em; height: 2.5em; display: flex; align-items: center; text-align: center;">${info.desc}</div>
+                    <div class="top-info">
+                        <div class="day">${i === 0 ? 'Сегодня' : dayName}</div>
+                        <div class="date">${dateStr}</div>
+                    </div>
+                    ${info.iconHTML}
+                    <div class="long-forecast-desc">${info.desc}</div>
                     <div class="temps">${maxTemp}° <span>${minTemp}°</span></div>
                 </div>
             `;
@@ -642,27 +652,42 @@ function updateMap(lat, lon) {
 
 function getWeatherDescription(code) {
     const codes = {
-        0: { desc: 'Ясно', icon: 'fa-sun' },
-        1: { desc: 'Преимущественно ясно', icon: 'fa-cloud-sun' },
-        2: { desc: 'Переменная облачность', icon: 'fa-cloud-sun' },
-        3: { desc: 'Пасмурно', icon: 'fa-cloud' },
-        45: { desc: 'Туман', icon: 'fa-smog' },
-        48: { desc: 'Оседающий туман', icon: 'fa-smog' },
-        51: { desc: 'Легкая морось', icon: 'fa-cloud-rain' },
-        53: { desc: 'Умеренная морось', icon: 'fa-cloud-rain' },
-        55: { desc: 'Плотная морось', icon: 'fa-cloud-rain' },
-        61: { desc: 'Небольшой дождь', icon: 'fa-cloud-rain' },
-        63: { desc: 'Умеренный дождь', icon: 'fa-cloud-showers-heavy' },
-        65: { desc: 'Сильный дождь', icon: 'fa-cloud-showers-heavy' },
-        71: { desc: 'Небольшой снег', icon: 'fa-snowflake' },
-        73: { desc: 'Умеренный снег', icon: 'fa-snowflake' },
-        75: { desc: 'Сильный снег', icon: 'fa-snowflake' },
-        80: { desc: 'Слабые ливни', icon: 'fa-cloud-showers-water' },
-        81: { desc: 'Умеренные ливни', icon: 'fa-cloud-showers-water' },
-        82: { desc: 'Сильные ливни', icon: 'fa-cloud-showers-water' },
-        95: { desc: 'Гроза', icon: 'fa-bolt' },
-        96: { desc: 'Гроза с градом', icon: 'fa-cloud-bolt' },
-        99: { desc: 'Сильная гроза с градом', icon: 'fa-cloud-bolt' }
+        0: { desc: 'Ясно', icon: 'fa-sun', type: 'sun' },
+        1: { desc: 'Преимущественно ясно', icon: 'fa-cloud-sun', type: 'cloud-sun' },
+        2: { desc: 'Переменная облачность', icon: 'fa-cloud-sun', type: 'cloud-sun' },
+        3: { desc: 'Пасмурно', icon: 'fa-cloud', type: 'cloud' },
+        45: { desc: 'Туман', icon: 'fa-smog', type: 'cloud' },
+        48: { desc: 'Оседающий туман', icon: 'fa-smog', type: 'cloud' },
+        51: { desc: 'Легкая морось', icon: 'fa-cloud-rain', type: 'cloud-rain' },
+        53: { desc: 'Умеренная морось', icon: 'fa-cloud-rain', type: 'cloud-rain' },
+        55: { desc: 'Плотная морось', icon: 'fa-cloud-rain', type: 'cloud-rain' },
+        61: { desc: 'Небольшой дождь', icon: 'fa-cloud-rain', type: 'cloud-rain' },
+        63: { desc: 'Умеренный дождь', icon: 'fa-cloud-showers-heavy', type: 'cloud-rain' },
+        65: { desc: 'Сильный дождь', icon: 'fa-cloud-showers-heavy', type: 'cloud-rain' },
+        71: { desc: 'Небольшой снег', icon: 'fa-snowflake', type: 'snow' },
+        73: { desc: 'Умеренный снег', icon: 'fa-snowflake', type: 'snow' },
+        75: { desc: 'Сильный снег', icon: 'fa-snowflake', type: 'snow' },
+        80: { desc: 'Слабые ливни', icon: 'fa-cloud-showers-water', type: 'cloud-rain' },
+        81: { desc: 'Умеренные ливни', icon: 'fa-cloud-showers-water', type: 'cloud-rain' },
+        82: { desc: 'Сильные ливни', icon: 'fa-cloud-showers-water', type: 'cloud-rain' },
+        95: { desc: 'Гроза', icon: 'fa-bolt', type: 'bolt' },
+        96: { desc: 'Гроза с градом', icon: 'fa-cloud-bolt', type: 'cloud-bolt' },
+        99: { desc: 'Сильная гроза с градом', icon: 'fa-cloud-bolt', type: 'cloud-bolt' }
     };
-    return codes[code] || { desc: 'Неизвестно', icon: 'fa-cloud' };
+    
+    const info = codes[code] || { desc: 'Неизвестно', icon: 'fa-cloud', type: 'cloud' };
+    
+    // Генерация HTML для иконки (слоистая для красоты)
+    let iconHTML = '';
+    if (info.type === 'cloud-sun') {
+        iconHTML = `<div class="weather-icon-wrapper"><i class="fas fa-sun icon-layer-sun"></i><i class="fas fa-cloud icon-layer-cloud"></i></div>`;
+    } else if (info.type === 'cloud-rain') {
+        iconHTML = `<div class="weather-icon-wrapper"><i class="fas fa-cloud icon-layer-cloud"></i><i class="fas fa-tint icon-layer-rain"></i></div>`;
+    } else if (info.type === 'cloud-bolt') {
+        iconHTML = `<div class="weather-icon-wrapper"><i class="fas fa-cloud icon-layer-cloud"></i><i class="fas fa-bolt icon-layer-bolt"></i></div>`;
+    } else {
+        iconHTML = `<div class="weather-icon-wrapper"><i class="fas ${info.icon}"></i></div>`;
+    }
+    
+    return { ...info, iconHTML };
 }
