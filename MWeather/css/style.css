@@ -211,8 +211,9 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .current-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; }
 .current-header h1 { font-size: 2.5rem; margin-bottom: 0.2rem; }
 .current-header p { color: var(--text-muted); font-size: 1.1rem; }
-.favorite-btn { background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer; transition: transform var(--transition), color var(--transition); }
-.favorite-btn:hover { color: #ef4444; transform: scale(1.08); }
+.favorite-btn { background: none; border: none; font-size: 1.5rem; color: #ef4444; cursor: pointer; transition: transform var(--transition), color var(--transition); }
+.favorite-btn:hover { color: #dc2626; transform: scale(1.08); }
+.favorite-btn.active { color: #dc2626; }
 
 .current-body { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
 .temp-section { display: flex; align-items: center; gap: 1.5rem; }
@@ -295,10 +296,69 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .hourly-card .humidity { color: var(--primary-color); font-size: 0.85rem; font-weight: bold; display: flex; align-items: center; gap: 0.2rem;}
 .hourly-card .humidity i { color: #3b82f6; font-size: 0.9rem; } /* Капли теперь голубые */
 
-/* Cloud and rain icons */
-.fa-cloud, .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-cloud-bolt, .fa-smog { color: var(--cloud-color); }
-.fa-sun, .fa-cloud-sun { color: var(--sun-color); }
-.fa-tint, .fas.fa-tint, .fa-umbrella, .fa-snowflake { color: var(--rain-color); }
+.favorite-btn { background: none; border: none; font-size: 1.5rem; color: #ef4444; cursor: pointer; transition: transform var(--transition), color var(--transition); }
+.favorite-btn:hover { color: #dc2626; transform: scale(1.08); }
+.favorite-btn.active { color: #dc2626; }
+
+/* Cloud and rain icons - strong overrides */
+.fa-cloud, 
+.fa-cloud-rain, 
+.fa-cloud-showers-heavy, 
+.fa-cloud-showers-water, 
+.fa-cloud-bolt, 
+.fa-smog { 
+    color: var(--cloud-color) !important; 
+}
+.fa-sun, 
+.fa-cloud-sun { 
+    color: var(--sun-color) !important; 
+}
+.fa-tint, 
+.fas.fa-tint, 
+.fa-umbrella, 
+.fa-snowflake { 
+    color: var(--rain-color) !important; 
+}
+
+/* Override for all forecast and weather elements */
+.long-forecast-card .fa-cloud,
+.long-forecast-card .fa-cloud-rain,
+.long-forecast-card .fa-cloud-showers-heavy,
+.long-forecast-card .fa-cloud-showers-water,
+.long-forecast-card .fa-cloud-bolt,
+.long-forecast-card .fa-smog {
+    color: var(--cloud-color) !important;
+}
+
+.long-forecast-card .fa-sun {
+    color: var(--sun-color) !important;
+}
+
+.hourly-card .fa-cloud,
+.hourly-card .fa-cloud-rain,
+.hourly-card .fa-cloud-showers-heavy,
+.hourly-card .fa-cloud-showers-water,
+.hourly-card .fa-cloud-bolt,
+.hourly-card .fa-smog {
+    color: var(--cloud-color) !important;
+}
+
+.hourly-card .fa-sun {
+    color: var(--sun-color) !important;
+}
+
+.forecast-item .fa-cloud,
+.forecast-item .fa-cloud-rain,
+.forecast-item .fa-cloud-showers-heavy,
+.forecast-item .fa-cloud-showers-water,
+.forecast-item .fa-cloud-bolt,
+.forecast-item .fa-smog {
+    color: var(--cloud-color) !important;
+}
+
+.forecast-item .fa-sun {
+    color: var(--sun-color) !important;
+}
 
 /* Modal */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(5px);}
