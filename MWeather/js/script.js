@@ -112,6 +112,22 @@ function setupSearchSuggestions() {
     });
 }
 
+// Рендер комбинированных иконок (облако+солнце, облако+молния, облако+дождь)
+function renderIconHTML(icon, extraClass = '') {
+    const cls = extraClass ? ` ${extraClass}` : '';
+    if (icon === 'fa-cloud-sun') {
+        return `<span class="icon-combo${cls}"><i class="fas fa-cloud"></i><i class="fas fa-sun"></i></span>`;
+    }
+    if (icon === 'fa-cloud-bolt') {
+        return `<span class="icon-combo${cls}"><i class="fas fa-cloud"></i><i class="fas fa-bolt bolt-icon"></i></span>`;
+    }
+    if (icon === 'fa-cloud-rain' || icon === 'fa-cloud-showers-heavy' || icon === 'fa-cloud-showers-water') {
+        return `<span class="icon-combo${cls}"><i class="fas fa-cloud"></i><i class="fas fa-tint rain-icon"></i></span>`;
+    }
+    // По умолчанию возвращаем обычную иконку
+    return `<i class="fas ${icon}${cls ? ' ' + extraClass : ''}"></i>`;
+}
+
 async function fetchCitySuggestions(query) {
     try {
         const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=ru&format=json`;
@@ -543,7 +559,8 @@ function updateUI(data) {
     document.getElementById('weather-desc').textContent = weatherInfo.desc;
     
     const mainIcon = document.getElementById('main-icon');
-    mainIcon.className = `fas ${weatherInfo.icon} weather-icon-large`;
+    // Используем HTML-рендеринг, чтобы разделять комбинированные иконки
+    mainIcon.innerHTML = renderIconHTML(weatherInfo.icon, 'weather-icon-large');
     
     const forecastMini = document.getElementById('forecast-list-mini');
     const forecast10 = document.getElementById('forecast-list-10');
@@ -564,10 +581,11 @@ function updateUI(data) {
             const hum = data.hourly.relativehumidity_2m[i];
             const info = getWeatherDescription(data.hourly.weathercode[i]);
             
+            const hourlyIconHTML = renderIconHTML(info.icon, 'hourly-icon');
             const hourlyHtml = `
                 <div class="hourly-card">
                     <div class="time">${i === currentIndex ? 'Сейчас' : hours}</div>
-                    <i class="fas ${info.icon}"></i>
+                    ${hourlyIconHTML}
                     <div class="temp">${temp}°</div>
                     <div class="humidity"><i class="fas fa-tint"></i> ${hum}%</div>
                 </div>
@@ -585,10 +603,11 @@ function updateUI(data) {
             const minTemp = Math.round(data.daily.temperature_2m_min[i]);
             const info = getWeatherDescription(data.daily.weathercode[i]);
             
-            const itemHTML = `
+                const iconMiniHTML = renderIconHTML(info.icon, 'forecast-mini-icon');
+                const itemHTML = `
                 <div class="forecast-item">
                     <div style="display:flex; align-items:center; gap: 10px; width: 45%;">
-                        <i class="fas ${info.icon}" style="color: #f59e0b; font-size: 1.2rem;"></i>
+                        ${iconMiniHTML}
                         <span style="text-transform: capitalize; font-weight: 500;">${dayName}</span>
                     </div>
                     <div style="width: 25%; text-align: left; color: var(--text-muted); font-size: 0.85em;">
@@ -612,11 +631,12 @@ function updateUI(data) {
             const minTemp = Math.round(data.daily.temperature_2m_min[i]);
             const info = getWeatherDescription(data.daily.weathercode[i]);
             
+            const longIconHTML = renderIconHTML(info.icon, 'long-forecast-icon');
             const item10 = `
                 <div class="long-forecast-card">
                     <div class="day">${i === 0 ? 'Сегодня' : dayName}</div>
                     <div class="date">${dateStr}</div>
-                    <i class="fas ${info.icon}"></i>
+                    ${longIconHTML}
                     <div style="color: var(--text-muted); font-size: 0.85em; height: 2.5em; display: flex; align-items: center; text-align: center;">${info.desc}</div>
                     <div class="temps">${maxTemp}° <span>${minTemp}°</span></div>
                 </div>
