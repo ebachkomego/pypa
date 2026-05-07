@@ -7,6 +7,7 @@
     --text-muted: #6b7280;
     --card-bg: #ffffff;
     --cloud-color: #64748b;
+    --sun-color: #f59e0b;
     --accent-color: #3b82f6;
     --border-radius: 1.5rem;
     --transition: 0.3s ease;
@@ -18,8 +19,9 @@ body.dark-theme {
     --bg-color: #0f172a;
     --text-color: #e2e8f0;
     --text-muted: #94a3b8;
-    --card-bg: #1e293b;
+    --card-bg: #111827;
     --cloud-color: #94a3b8;
+    --sun-color: #fbbf24;
     --accent-color: #38bdf8;
 }
 
@@ -64,22 +66,76 @@ body.dark-theme .theme-toggle-btn {
 body.dark-theme .favorite-item {
     background: rgba(96, 165, 250, 0.12);
 }
-body.dark-theme .card {
-    border-color: rgba(255, 255, 255, 0.08);
-}
-body.dark-theme .theme-toggle-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.16);
-}
-body.dark-theme .favorite-item {
-    background: rgba(96, 165, 250, 0.12);
-}
+
 body.dark-theme .search-bar .suggestions-list {
     border-color: rgba(148, 163, 184, 0.14);
 }
 body.dark-theme .suggestion-item:hover {
     background: rgba(96, 165, 250, 0.16);
 }
+body.dark-theme .header {
+    background-color: #111827;
+}
+body.dark-theme .nav-links a {
+    color: rgba(226, 232, 240, 0.78);
+}
+body.dark-theme .nav-links a:hover,
+body.dark-theme .nav-links a.active {
+    color: white;
+}
+body.dark-theme .forecast-item,
+body.dark-theme .hourly-card,
+body.dark-theme .long-forecast-card,
+body.dark-theme .detail-item,
+body.dark-theme .gallery-card,
+body.dark-theme .gallery-info,
+body.dark-theme .favorites-section,
+body.dark-theme .ticker-controls select,
+body.dark-theme .ticker-controls input,
+body.dark-theme .view-all-btn,
+body.dark-theme .favorite-item,
+body.dark-theme .header,
+body.dark-theme .modal-content,
+body.dark-theme .footer {
+    background: #111827;
+    border-color: rgba(148, 163, 184, 0.16);
+}
+body.dark-theme .forecast-item,
+body.dark-theme .hourly-card,
+body.dark-theme .long-forecast-card,
+body.dark-theme .detail-item,
+body.dark-theme .gallery-card {
+    color: var(--text-color);
+}
+body.dark-theme .forecast-item:hover,
+body.dark-theme .hourly-card:hover,
+body.dark-theme .long-forecast-card:hover,
+body.dark-theme .card:hover {
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
+    background: #172132 !important;
+}
+body.dark-theme .view-all-btn {
+    background: #1e293b;
+    color: #93c5fd;
+}
+body.dark-theme .view-all-btn:hover {
+    background: #0f172a !important;
+}
+body.dark-theme .detail-item { background: #141b2b; }
+body.dark-theme .detail-item:hover { background: #1f2a40 !important; }
+body.dark-theme .gallery-form input,
+body.dark-theme .gallery-form button,
+body.dark-theme .ticker-controls select,
+body.dark-theme .ticker-controls input {
+    border-color: rgba(148, 163, 184, 0.2);
+}
+body.dark-theme .gallery-info { color: #e2e8f0; }
+body.dark-theme .hourly-card { background: #141b2b; }
+body.dark-theme .long-forecast-card { background: #141b2b; }
+body.dark-theme .forecast-item { background: #141b2b; }
+body.dark-theme .search-bar input { background: #0f172a; color: #e2e8f0; }
+body.dark-theme .search-bar button { background: #2563eb; }
+body.dark-theme .footer { background: #111827; color: var(--text-muted); }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -130,6 +186,7 @@ body.dark-theme {
 .nav-links { display: flex; gap: 1.5rem; }
 .nav-links a { color: #bfdbfe; text-decoration: none; font-weight: 500; transition: var(--transition); display: flex; align-items: center; gap: 0.3em; cursor: pointer; }
 .nav-links a:hover, .nav-links a.active { color: white; border-bottom: 2px solid white; padding-bottom: 2px;}
+.nav-links a[data-target="home-view"] .fa-cloud-sun { color: #fbbf24; }
 
 /* Main Content */
 .main-content { flex: 1; padding: 2rem 0; }
@@ -234,7 +291,8 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .hourly-card .humidity i { color: #3b82f6; font-size: 0.9rem; } /* Капли теперь голубые */
 
 /* Cloud and rain icons */
-.fa-cloud, .fa-cloud-sun, .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-cloud-bolt, .fa-smog { color: var(--cloud-color); }
+.fa-cloud, .fa-cloud-rain, .fa-cloud-showers-heavy, .fa-cloud-showers-water, .fa-cloud-bolt, .fa-smog { color: var(--cloud-color); }
+.fa-cloud-sun { color: var(--sun-color); }
 .fa-tint, .fas.fa-tint, .fa-umbrella, .fa-snowflake { color: var(--accent-color); }
 
 /* Modal */
