@@ -3,39 +3,6 @@
 let currentLat = 55.7558;
 let currentLon = 37.6173;
 let favorites = loadFavorites();
-let currentGalleryIndex = null;
-const galleryItems = [
-    {
-        url: 'https://images.unsplash.com/photo-1501973801540-537f08ccae7b?auto=format&fit=crop&w=800&q=80',
-        title: 'Спокойное небо',
-        description: 'Чистое небо и солнце – отличный день для прогулки.'
-    },
-    {
-        url: 'https://images.unsplash.com/photo-1470115636492-6d2b56f083c3?auto=format&fit=crop&w=800&q=80',
-        title: 'Облака на закате',
-        description: 'Тёплые оттенки заката делают облака мягкими и красивыми.'
-    },
-    {
-        url: 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?auto=format&fit=crop&w=800&q=80',
-        title: 'Дождливая сцена',
-        description: 'Пейзаж с дождевыми тучами напоминает о внимательном отношении к погоде.'
-    },
-    {
-        url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=800&q=80',
-        title: 'Гроза на горизонте',
-        description: 'Могут появиться мощные грозы с электрическими разрядами.'
-    },
-    {
-        url: 'https://images.unsplash.com/photo-1499346030926-9a72daac6c63?auto=format&fit=crop&w=800&q=80',
-        title: 'Облака над водой',
-        description: 'Тихий вечер у озера с низкими облаками.'
-    },
-    {
-        url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=800&q=80',
-        title: 'Лёгкая морось',
-        description: 'Нежная морось добавляет атмосферу уюта.'
-    }
-];
 
 document.addEventListener('DOMContentLoaded', () => {
     updateDate();
@@ -45,10 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFavoritesClick();
     setupSearchSuggestions();
     setupSearchEvents();
-    setupGalleryForm();
-    initTicker();
     renderFavorites();
-    renderGallery();
     setupLocateButton();
     initLocation();
 });
@@ -247,81 +211,6 @@ function updateFavoriteButton(city) {
     } else {
         icon.className = 'far fa-heart';
     }
-}
-
-function setupGalleryForm() {
-    const form = document.getElementById('add-image-form');
-    form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        const input = document.getElementById('image-url');
-        const url = input.value.trim();
-        if (!url) return;
-
-        galleryItems.unshift({
-            url,
-            title: 'Новое изображение',
-            description: 'Пользовательское изображение, добавленное через URL.'
-        });
-        input.value = '';
-        renderGallery();
-        showGalleryInfo(0);
-    });
-}
-
-function renderGallery() {
-    if (currentGalleryIndex === null && galleryItems.length) {
-        showGalleryInfo(0);
-        return;
-    }
-
-    const grid = document.getElementById('gallery-grid');
-    grid.innerHTML = galleryItems
-        .map((item, index) => `
-            <div class="gallery-card ${currentGalleryIndex === index ? 'selected' : ''}" data-index="${index}">
-                <img src="${item.url}" alt="${item.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&w=800&q=80'; this.onerror=null;">
-            </div>
-        `)
-        .join('');
-
-    grid.querySelectorAll('.gallery-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const index = Number(card.dataset.index);
-            showGalleryInfo(index);
-        });
-    });
-}
-
-function showGalleryInfo(index) {
-    currentGalleryIndex = index;
-    const info = document.getElementById('gallery-info');
-    const item = galleryItems[index];
-    if (!item) return;
-    info.innerHTML = `
-        <h3>${item.title}</h3>
-        <p>${item.description}</p>
-    `;
-    renderGallery();
-}
-
-function initTicker() {
-    const ticker = document.getElementById('news-ticker');
-    const speedControl = document.getElementById('ticker-speed');
-    const directionSelect = document.getElementById('ticker-direction');
-    const styleSelect = document.getElementById('ticker-style');
-    const speedValue = document.getElementById('ticker-speed-value');
-
-    const updateTicker = () => {
-        const speed = Number(speedControl.value);
-        speedValue.textContent = speed;
-        ticker.className = `ticker-text ${styleSelect.value}`;
-        const duration = Math.max(10, 60 - speed * 1.5);
-        ticker.style.animation = `${duration}s marquee-${directionSelect.value} linear infinite`;
-    };
-
-    speedControl.addEventListener('input', updateTicker);
-    directionSelect.addEventListener('change', updateTicker);
-    styleSelect.addEventListener('change', updateTicker);
-    updateTicker();
 }
 
 function debounce(fn, delay) {
