@@ -221,6 +221,12 @@ body.dark-theme .card { border-color: rgba(255,255,255,0.08); }
 .view-all-btn:hover { background: #dbeafe; }
 
 .favorites-section { margin-top: 2rem; }
+.favorite-item { display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1rem; border-radius: 999px; background: rgba(37, 99, 235, 0.08); color: var(--text-color); cursor: pointer; transition: var(--transition); border: 1px solid transparent; }
+.favorite-item span { font-weight: 600; }
+.favorite-item .remove-fav { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; border: none; background: rgba(255,255,255,0.12); color: var(--text-muted); cursor: pointer; transition: var(--transition); }
+.favorite-item .remove-fav:hover { background: rgba(37, 99, 235, 0.16); color: var(--text-color); }
+.favorite-item .remove-fav i { font-size: 0.85rem; }
+
 .gallery-form { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 @keyframes marquee-left { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
 @keyframes marquee-right { from { transform: translateX(-100%); } to { transform: translateX(100%); } }

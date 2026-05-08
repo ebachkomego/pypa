@@ -151,7 +151,7 @@ function renderFavorites() {
         .map(city => `
             <div class="favorite-item" data-city="${city}">
                 <span>${city}</span>
-                <button class="remove-fav" aria-label="Удалить из избранного">&times;</button>
+                <button class="remove-fav" aria-label="Удалить из избранного"><i class="fas fa-times"></i></button>
             </div>
         `)
         .join('');
